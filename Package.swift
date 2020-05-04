@@ -5,22 +5,35 @@ import PackageDescription
 
 let package = Package(
     name: "S4TFApp",
+    platforms: [
+        .macOS(.v10_13),
+    ],
     products: [
-        // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(
+            name: "S4TFLib",
+            type: .dynamic,
+            targets: ["S4TFLib"]),
+
+        .executable(
             name: "S4TFApp",
             targets: ["S4TFApp"]),
     ],
     dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        // .package(url: /* package url */, from: "1.0.0"),
+        .package(name: "TensorFlowModels", url: "https://github.com/tensorflow/swift-models.git", .branch("master"))
     ],
     targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages which this package depends on.
+        .target(
+            name: "S4TFLib",
+            dependencies: [
+                .product(name: "TextModels", package: "TensorFlowModels")
+            ],
+            path: "Sources/S4TFLib"),
         .target(
             name: "S4TFApp",
-            dependencies: []),
+            dependencies: [
+                "S4TFLib"
+            ],
+            path: "Sources/Example"),
         .testTarget(
             name: "S4TFAppTests",
             dependencies: ["S4TFApp"]),
